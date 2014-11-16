@@ -70,10 +70,18 @@ public class Frame {
     
     public func registerObserver(frame:Frame) {
         self.observers.append(frame)
+        
+        if self.observers.count > 2 {
+            self.observers.removeLast()
+        }
     }
     
     public func updateFirstRoll(knockedOutPins:Int) {
-        bonus = knockedOutPins
+        bonus += knockedOutPins
+        
+        if isStrike(knockedOutPins) {
+            self.game.registerAsObserverOfNextFrameRolls(self)
+        }
     }
     
     public func updateSecondRoll(knockedOutPins:Int) {
@@ -88,6 +96,10 @@ public class Frame {
     
     private func isStrike() -> Bool {
         return firstRoll == 10
+    }
+    
+    private func isStrike(knockedOutPins:Int) -> Bool {
+        return knockedOutPins == 10
     }
     
     private func isSpare() -> Bool {
@@ -127,3 +139,16 @@ game.frames[4].Score
 game.frames[5].Score
 
 game.Score
+
+let game1 = Bowling()
+game1.scoreFrame(10, secondRoll: 0)
+game1.scoreFrame(10, secondRoll: 0)
+game1.scoreFrame(10, secondRoll: 0)
+game1.scoreFrame(1, secondRoll: 1)
+
+game1.frames[0].Score
+game1.frames[1].Score
+game1.frames[2].Score
+game1.frames[3].Score
+
+game1.Score
